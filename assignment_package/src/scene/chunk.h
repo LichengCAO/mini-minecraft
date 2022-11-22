@@ -27,19 +27,28 @@ struct EnumHash {
 // to render the world block by block.
 
 class Chunk {
-private:
+private:  
     // All of the blocks contained within this Chunk
     std::array<BlockType, 65536> m_blocks;
     // This Chunk's four neighbors to the north, south, east, and west
     // The third input to this map just lets us use a Direction as
     // a key for this map.
-    // These allow us to properly determine
     std::unordered_map<Direction, Chunk*, EnumHash> m_neighbors;
-
+    const glm::vec2 m_offsetXZ;
+    ChunkBlocks m_opaquePart;
+    ChunkBlocks m_transparentPart;
+    //helper functions
+    void generateFace(BlockFace f,int x,int y,int z,
+                      std::vector<GLuint>& id,std::vector<float>& data);
 public:
-    Chunk();
+    const ChunkBlocks& opaquePart;
+    const ChunkBlocks& transparentPart;
+
+    Chunk(OpenGLContext* context, int x, int z);
     BlockType getBlockAt(unsigned int x, unsigned int y, unsigned int z) const;
     BlockType getBlockAt(int x, int y, int z) const;
+    BlockType getBlockAt(glm::vec3)const;
     void setBlockAt(unsigned int x, unsigned int y, unsigned int z, BlockType t);
     void linkNeighbor(uPtr<Chunk>& neighbor, Direction dir);
+    void createBlocksVBOdata();
 };

@@ -21,55 +21,66 @@ struct VertexData{
 
 struct BlockFace{
     Direction dir;
+    glm::vec3 offset;
     std::array<VertexData,4> verts;
 
-    BlockFace(Direction d,const VertexData &ll,const VertexData &lr,const VertexData &ur, const VertexData &ul)
-        :dir(d),verts{ll,lr,ur,ul}
+    BlockFace(Direction d, const glm::vec3 offset,
+              const VertexData &ll,const VertexData &lr,const VertexData &ur, const VertexData &ul)
+        :dir(d),offset(offset),verts{ll,lr,ur,ul}
     {}
 };
 
 const std::array<BlockFace,6> adjacentFaces{
-            BlockFace(XPOS, VertexData{glm::vec4(1,0,1,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(1,0,0,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(1,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(1,1,1,1),glm::vec2(0,BLK_UV)}
+            BlockFace(XPOS, glm::vec3(1,0,0),
+                      VertexData{glm::vec4(1,0,1,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(1,0,0,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(1,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(1,1,1,1),glm::vec2(0,BLK_UV)}
                       ),
-            BlockFace(XNEG, VertexData{glm::vec4(0,0,0,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(0,0,1,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(0,1,1,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(0,1,0,1),glm::vec2(0,BLK_UV)}
+            BlockFace(XNEG, glm::vec3(-1,0,0),
+                      VertexData{glm::vec4(0,0,0,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(0,0,1,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(0,1,1,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(0,1,0,1),glm::vec2(0,BLK_UV)}
                       ),
-            BlockFace(YPOS, VertexData{glm::vec4(0,1,1,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(1,1,1,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(1,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(0,1,0,1),glm::vec2(0,BLK_UV)}
+            BlockFace(YPOS, glm::vec3(0,1,0),
+                      VertexData{glm::vec4(0,1,1,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(1,1,1,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(1,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(0,1,0,1),glm::vec2(0,BLK_UV)}
                       ),
-            BlockFace(YNEG, VertexData{glm::vec4(0,0,0,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(1,0,0,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(1,0,1,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(0,0,1,1),glm::vec2(0,BLK_UV)}
+            BlockFace(YNEG, glm::vec3(0,-1,0),
+                      VertexData{glm::vec4(0,0,0,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(1,0,0,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(1,0,1,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(0,0,1,1),glm::vec2(0,BLK_UV)}
                       ),
-            BlockFace(ZPOS, VertexData{glm::vec4(0,0,1,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(1,0,1,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(1,1,1,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(0,1,1,1),glm::vec2(0,BLK_UV)}
+            BlockFace(ZPOS, glm::vec3(0,0,1),
+                      VertexData{glm::vec4(0,0,1,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(1,0,1,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(1,1,1,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(0,1,1,1),glm::vec2(0,BLK_UV)}
                       ),
-            BlockFace(ZNEG, VertexData{glm::vec4(1,0,0,1),glm::vec2(0,0)},
-                            VertexData{glm::vec4(0,0,0,1),glm::vec2(BLK_UV,0)},
-                            VertexData{glm::vec4(0,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
-                            VertexData{glm::vec4(1,1,0,1),glm::vec2(0,BLK_UV)}
+            BlockFace(ZNEG, glm::vec3(0,0,-1),
+                      VertexData{glm::vec4(1,0,0,1),glm::vec2(0,0)},
+                      VertexData{glm::vec4(0,0,0,1),glm::vec2(BLK_UV,0)},
+                      VertexData{glm::vec4(0,1,0,1),glm::vec2(BLK_UV,BLK_UV)},
+                      VertexData{glm::vec4(1,1,0,1),glm::vec2(0,BLK_UV)}
                       )
 };
 
-class Blocks:public InterleavedDrawable{
+class ChunkBlocks:public InterleavedDrawable{
 private:
     const std::vector<GLuint>* m_tempIdx;    //use to hold data for createVBOdata temperally
     const std::vector<float>* m_tempData;//use to hold data for createVBOdata temperally
 public:
-    Blocks(OpenGLContext* mp_context);
+    ChunkBlocks(OpenGLContext* mp_context);
     void passChunkData(const std::vector<GLuint>* idx,const std::vector<float>* data);
     virtual void createVBOdata()override;
     virtual void createInterleavedVBOdata()override;
 };
 
 glm::vec2 getBlockUV(BlockType t,const Direction d);
+bool isBreakable(BlockType type);
+bool isOpaque(BlockType type);
+bool shouldDraw(BlockType curr, BlockType adjacent);

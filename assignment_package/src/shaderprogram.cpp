@@ -242,6 +242,16 @@ void ShaderProgram::drawInstanced(InstancedDrawable &d)
 
 }
 
+void ShaderProgram::drawInterleaved(const InterleavedDrawable &d){
+    useMe();
+
+    if(d.elemCount() < 0) {
+        throw std::out_of_range("Attempting to draw a drawable with m_count of " + std::to_string(d.elemCount()) + "!");
+    }
+
+
+}
+
 char* ShaderProgram::textFileRead(const char* fileName) {
     char* text;
 
