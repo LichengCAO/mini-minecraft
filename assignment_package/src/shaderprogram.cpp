@@ -8,7 +8,7 @@
 
 ShaderProgram::ShaderProgram(OpenGLContext *context)
     : vertShader(), fragShader(), prog(),
-      attrPos(-1), attrNor(-1), attrCol(-1),
+      attrPos(-1), attrNor(-1), attrCol(-1),attrUV(-1),
       unifModel(-1), unifModelInvTr(-1), unifViewProj(-1), unifColor(-1),
       context(context)
 {}
@@ -66,6 +66,7 @@ void ShaderProgram::create(const char *vertfile, const char *fragfile)
     attrCol = context->glGetAttribLocation(prog, "vs_Col");
     if(attrCol == -1) attrCol = context->glGetAttribLocation(prog, "vs_ColInstanced");
     attrPosOffset = context->glGetAttribLocation(prog, "vs_OffsetInstanced");
+    attrUV = context->glGetAttribLocation(prog, "vs_UV");
 
     unifModel      = context->glGetUniformLocation(prog, "u_Model");
     unifModelInvTr = context->glGetUniformLocation(prog, "u_ModelInvTr");
@@ -169,6 +170,11 @@ void ShaderProgram::draw(Drawable &d)
         context->glVertexAttribPointer(attrCol, 4, GL_FLOAT, false, 0, NULL);
     }
 
+    if(attrUV!=-1 && d.bindUV()){
+        context->glEnableVertexAttribArray(attrUV);
+        context->glVertexAttribPointer(attrUV, 2, GL_FLOAT, false, 0, NULL);
+    }
+
     // Bind the index buffer and then draw shapes from it.
     // This invokes the shader program, which accesses the vertex buffers.
     d.bindIdx();
@@ -177,6 +183,7 @@ void ShaderProgram::draw(Drawable &d)
     if (attrPos != -1) context->glDisableVertexAttribArray(attrPos);
     if (attrNor != -1) context->glDisableVertexAttribArray(attrNor);
     if (attrCol != -1) context->glDisableVertexAttribArray(attrCol);
+    if (attrUV  != -1) context->glDisableVertexAttribArray(attrUV);
 
     context->printGLErrorLog();
 }

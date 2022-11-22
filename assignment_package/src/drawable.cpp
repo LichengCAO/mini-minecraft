@@ -2,8 +2,9 @@
 #include <glm_includes.h>
 
 Drawable::Drawable(OpenGLContext* context)
-    : m_count(-1), m_bufIdx(), m_bufPos(), m_bufNor(), m_bufCol(),
+    : m_count(-1), m_bufIdx(), m_bufPos(), m_bufNor(), m_bufCol(), m_bufUV(),
       m_idxGenerated(false), m_posGenerated(false), m_norGenerated(false), m_colGenerated(false),
+      m_uvGenerated(false),
       mp_context(context)
 {}
 
@@ -17,11 +18,12 @@ void Drawable::destroyVBOdata()
     mp_context->glDeleteBuffers(1, &m_bufPos);
     mp_context->glDeleteBuffers(1, &m_bufNor);
     mp_context->glDeleteBuffers(1, &m_bufCol);
-    m_idxGenerated = m_posGenerated = m_norGenerated = m_colGenerated = false;
+    mp_context->glDeleteBuffers(1,&m_bufUV);
+    m_idxGenerated = m_posGenerated = m_norGenerated = m_colGenerated = m_uvGenerated = false;
     m_count = -1;
 }
 
-GLenum Drawable::drawMode()
+GLenum Drawable::drawMode()const
 {
     // Since we want every three indices in bufIdx to be
     // read to draw our Drawable, we tell that the draw mode
@@ -32,7 +34,7 @@ GLenum Drawable::drawMode()
     return GL_TRIANGLES;
 }
 
-int Drawable::elemCount()
+int Drawable::elemCount()const
 {
     return m_count;
 }
@@ -65,7 +67,13 @@ void Drawable::generateCol()
     mp_context->glGenBuffers(1, &m_bufCol);
 }
 
-bool Drawable::bindIdx()
+void Drawable::generateUV()
+{
+    m_uvGenerated = true;
+    mp_context->glGenBuffers(1, &m_bufUV);
+}
+
+bool Drawable::bindIdx()const
 {
     if(m_idxGenerated) {
         mp_context->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufIdx);
@@ -73,7 +81,7 @@ bool Drawable::bindIdx()
     return m_idxGenerated;
 }
 
-bool Drawable::bindPos()
+bool Drawable::bindPos()const
 {
     if(m_posGenerated){
         mp_context->glBindBuffer(GL_ARRAY_BUFFER, m_bufPos);
@@ -81,7 +89,7 @@ bool Drawable::bindPos()
     return m_posGenerated;
 }
 
-bool Drawable::bindNor()
+bool Drawable::bindNor()const
 {
     if(m_norGenerated){
         mp_context->glBindBuffer(GL_ARRAY_BUFFER, m_bufNor);
@@ -89,12 +97,20 @@ bool Drawable::bindNor()
     return m_norGenerated;
 }
 
-bool Drawable::bindCol()
+bool Drawable::bindCol()const
 {
     if(m_colGenerated){
         mp_context->glBindBuffer(GL_ARRAY_BUFFER, m_bufCol);
     }
     return m_colGenerated;
+}
+
+bool Drawable::bindUV()const
+{
+    if(m_uvGenerated){
+        mp_context->glBindBuffer(GL_ARRAY_BUFFER, m_bufUV);
+    }
+    return m_uvGenerated;
 }
 
 InstancedDrawable::InstancedDrawable(OpenGLContext *context)
@@ -130,5 +146,28 @@ void InstancedDrawable::clearColorBuf() {
     if(m_colGenerated) {
         mp_context->glDeleteBuffers(1, &m_bufCol);
         m_colGenerated = false;
+    }
+}
+
+InterleavedDrawable::InterleavedDrawable(OpenGLContext *context)
+    :Drawable(context),m_bufInterleaved(-1),m_interleavedGenerated(false)
+{}
+
+void InterleavedDrawable::generateInterleaved(){
+    m_interleavedGenerated = true;
+    mp_context->glGenBuffers(1,&m_bufInterleaved);
+}
+
+bool InterleavedDrawable::bindInterleaved()const{
+    if(m_interleavedGenerated){
+        mp_context->glBindBuffer(GL_ARRAY_BUFFER, m_bufInterleaved);
+    }
+    return m_interleavedGenerated;
+}
+
+void InterleavedDrawable::clearInterleavedBuf(){
+    if(m_interleavedGenerated){
+        mp_context->glDeleteBuffers(1,&m_bufInterleaved);
+        m_interleavedGenerated = false;
     }
 }

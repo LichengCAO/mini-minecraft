@@ -86,7 +86,6 @@ void createCubeVertexPositions(glm::vec4 (&cub_vert_pos)[CUB_VERT_COUNT])
     cub_vert_pos[idx++] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
-
 void createCubeVertexNormals(glm::vec4 (&cub_vert_nor)[CUB_VERT_COUNT])
 {
     int idx = 0;
@@ -161,7 +160,6 @@ void Cube::createVBOdata()
     mp_context->glBufferData(GL_ARRAY_BUFFER, CUB_VERT_COUNT * sizeof(glm::vec4), sph_vert_nor, GL_STATIC_DRAW);
 
 }
-
 
 void Cube::createInstancedVBOdata(std::vector<glm::vec3> &offsets, std::vector<glm::vec3> &colors) {
     m_numInstances = offsets.size();

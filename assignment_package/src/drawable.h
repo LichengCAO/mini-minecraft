@@ -12,12 +12,13 @@ protected:
     GLuint m_bufPos; // A Vertex Buffer Object that we will use to store mesh vertices (vec4s)
     GLuint m_bufNor; // A Vertex Buffer Object that we will use to store mesh normals (vec4s)
     GLuint m_bufCol; // Can be used to pass per-vertex color information to the shader, but is currently unused.
-                   // Instead, we use a uniform vec4 in the shader to set an overall color for the geometry
+    GLuint m_bufUV;  // Instead, we use a uniform vec4 in the shader to set an overall color for the geometry
 
     bool m_idxGenerated; // Set to TRUE by generateIdx(), returned by bindIdx().
     bool m_posGenerated;
     bool m_norGenerated;
     bool m_colGenerated;
+    bool m_uvGenerated;
 
     OpenGLContext* mp_context; // Since Qt's OpenGL support is done through classes like QOpenGLFunctions_3_2_Core,
                           // we need to pass our OpenGL context to the Drawable in order to call GL functions
@@ -32,8 +33,8 @@ public:
     void destroyVBOdata(); // Frees the VBOs of the Drawable.
 
     // Getter functions for various GL data
-    virtual GLenum drawMode();
-    int elemCount();
+    virtual GLenum drawMode()const;
+    int elemCount()const;
 
     // Call these functions when you want to call glGenBuffers on the buffers stored in the Drawable
     // These will properly set the values of idxBound etc. which need to be checked in ShaderProgram::draw()
@@ -41,11 +42,13 @@ public:
     void generatePos();
     void generateNor();
     void generateCol();
+    void generateUV();
 
-    bool bindIdx();
-    bool bindPos();
-    bool bindNor();
-    bool bindCol();
+    bool bindIdx()const;
+    bool bindPos()const;
+    bool bindNor()const;
+    bool bindCol()const;
+    bool bindUV()const;
 };
 
 // A subclass of Drawable that enables the base code to render duplicates of
@@ -71,4 +74,18 @@ public:
     void clearColorBuf();
 
     virtual void createInstancedVBOdata(std::vector<glm::vec3> &offsets, std::vector<glm::vec3> &colors) = 0;
+};
+
+class InterleavedDrawable: public Drawable{
+protected:
+    GLuint m_bufInterleaved;
+    bool m_interleavedGenerated;
+public:
+    InterleavedDrawable(OpenGLContext* mp_context);
+
+    void generateInterleaved();
+    bool bindInterleaved()const;
+    void clearInterleavedBuf();
+
+    virtual void createInterleavedVBOdata() = 0;
 };

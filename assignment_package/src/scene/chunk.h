@@ -4,25 +4,12 @@
 #include <array>
 #include <unordered_map>
 #include <cstddef>
-
-
-//using namespace std;
+#include "block.h"
 
 // C++ 11 allows us to define the size of an enum. This lets us use only one byte
 // of memory to store our different block types. By default, the size of a C++ enum
 // is that of an int (so, usually four bytes). This *does* limit us to only 256 different
 // block types, but in the scope of this project we'll never get anywhere near that many.
-enum BlockType : unsigned char
-{
-    EMPTY, GRASS, DIRT, STONE, WATER
-};
-
-// The six cardinal directions in 3D space
-enum Direction : unsigned char
-{
-    XPOS, XNEG, YPOS, YNEG, ZPOS, ZNEG
-};
-
 // Lets us use any enum class as the key of a
 // std::unordered_map
 struct EnumHash {
@@ -39,7 +26,6 @@ struct EnumHash {
 // render all the world at once, while also not having
 // to render the world block by block.
 
-// TODO have Chunk inherit from Drawable
 class Chunk {
 private:
     // All of the blocks contained within this Chunk
